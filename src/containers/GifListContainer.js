@@ -8,7 +8,8 @@ export default class GifListContainer extends React.Component{
     constructor(){
         super()
         this.state = {
-            gifs: []
+            gifs: [],
+            search: ""
         }
     }
 
@@ -23,11 +24,30 @@ export default class GifListContainer extends React.Component{
         })
     }
 
+    handleSearch = event => {
+        this.setState({
+          search: event.target.value
+        })
+    }
+
+    handleSubmit = (event) => {
+        event.preventDefault()
+        
+        fetch(`https://api.giphy.com/v1/gifs/search?q=${this.state.search}&api_key=dc6zaTOxFJmzC&rating=g`)
+        .then(resp => resp.json())
+        .then(results => {
+            this.setState({
+                gifs: results['data'].slice(0, 3)
+            })
+        })
+
+        event.target.reset()
+    }
 
     render(){
         return(
             <div>
-                < GifSearch/>
+                < GifSearch handleSearch={this.handleSearch} handleSubmit={this.handleSubmit}/>
                 < GifList gifs={this.state.gifs} />
             </div>
         )
